@@ -6,9 +6,14 @@ import FilterList from './FilterList';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
 import InputLabel from '@material-ui/core/InputLabel';
-import Icon from '@material-ui/core/Icon';
+import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
+import SettingsOutlined from '@material-ui/icons/SettingsOutlined';
+import SaveOutlined from '@material-ui/icons/SaveOutlined';
+import ShareOutlined from '@material-ui/icons/ShareOutlined';
+import PlayArrow from '@material-ui/icons/PlayArrow';
+import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const categories = [
 	"All",
@@ -49,9 +54,18 @@ const categories = [
 ]
 
 const presets = [
-	{ id: 1, name: "Low Barrier to Entry" },
-	{ id: 2, name: "Quick Win" }
+	{ id: "1", name: "Low Barrier to Entry" },
+	{ id: "2", name: "Quick Win" }
 ];
+
+const settingItems = [
+	{ id: "1", name: "Save", icon: "save" },
+	{ id: "2", name: "Save As", icon: "" },
+	{ id: "3", name: "Rename" },
+	{ id: "4", name: "Share", icon: "share" },
+	{ id: "5", name: "Delete", icon: "delete", color: "red" },
+]
+
 const checkedId1 = [
 	"Appliances",
 	"Health & Household",
@@ -104,13 +118,21 @@ class Container extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			selectedPresetId: ""
+			selectedPresetId: "",
+			selectedSettingItem: ""
 		}
 	}
 
-	handleSelectChange = event => {
+	handleSelectPresetChange = event => {
+		console.log(event.target.value);
 		this.setState({
 			selectedPresetId: event.target.value
+		})
+	}
+
+	handleSelectSettingChange = event => {
+		this.setState({
+			selectedSettingItem: event.target.value
 		})
 	}
 
@@ -120,55 +142,85 @@ class Container extends React.Component {
 		return (
 		  <Grid className={""} container>
 			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={2}>
-				  <FormControl variant="outlined" className={classes.formControl}>
+				  <FormControl
+					variant="outlined"
+					className={`${classes.formControl} ${classes.formControlPreset}`}>
 					  {!this.state.selectedPresetId &&
 					  <InputLabel shrink={false} disabled={true}>Select a Preset</InputLabel>}
 					  <Select
-						native
-						onChange={this.handleSelectChange}
+						onChange={this.handleSelectPresetChange}
+						value={this.state.selectedPresetId}
 						input={
 							<OutlinedInput
 							  className={classes.outlinedInput}
 							/>
 						}
 					  >
-						  <option value=""></option>
+						  <MenuItem value=""></MenuItem>
 						  {presets.map(preset =>
-							<option key={preset.id} value={preset.id}>{preset.name}</option>
+							<MenuItem key={`${preset.id}#selectPreset`} value={preset.id}>{preset.name}</MenuItem>
 						  )}
 					  </Select>
 				  </FormControl>
 			  </Grid>
 			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={1}>
-				  <FormControl variant="outlined" className={classes.formControl}>
-					  {!this.state.selectedPresetId &&
+				  <FormControl style={{ overflow: "hidden" }}
+							   variant="outlined"
+							   className={`${classes.formControl} ${classes.formControlSettings}`}>
 					  <InputLabel shrink={false} disabled={true}>
-						  <Icon>settings</Icon>
-					  </InputLabel>}
+						  <SettingsOutlined/>
+					  </InputLabel>
 					  <Select
-						native
-						// onChange={this.handleSelectChange}
+						onChange={this.handleSelectSettingChange}
+						value={""}
 						input={
 							<OutlinedInput
 							  className={classes.outlinedInput}
 							/>
 						}
 					  >
-						  <option value=""></option>
-						  {/*{presets.map(preset =>*/}
-						  {/*<option key={preset.id} value={preset.id}>{preset.name}</option>*/}
-						  {/*)}*/}
+						  <MenuItem
+							value={"1"}
+						  >
+							  <SaveOutlined/>Save
+						  </MenuItem>
+						  <MenuItem
+							value={"2"}
+						  >
+							  <SaveOutlined/>Save as
+						  </MenuItem>
+						  <MenuItem
+							value={"3"}
+						  >
+							  Rename
+						  </MenuItem>
+						  <MenuItem
+							value={"4"}
+						  >
+							  <ShareOutlined/>Share
+						  </MenuItem>
+						  <MenuItem
+							style={{ borderTop: "1px solid #f5f5f5", color: "red" }}
+							value={"5"}
+						  >
+							  <DeleteOutlined style={{ color: "red" }}/>Delete
+						  </MenuItem>
 					  </Select>
 				  </FormControl>
 			  </Grid>
-			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={3}>
+			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={4}>
 				  gaogaogaogao
 			  </Grid>
-			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={3}>
-				  gaogaogaogao
-			  </Grid>
-			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={3}>
-				  gaogaogaogao
+			  <Grid className={`${classes.item} ${classes.headerItem}`} item xs={5}>
+				  <Button color="default" variant="outlined" className={classes.btnTutorials}>
+					  <PlayArrow/>View Tutorials
+				  </Button>
+				  <Button color="secondary" variant="outlined" className={classes.btnClearFilter}>
+					  Clear Filters
+				  </Button>
+				  <Button color="secondary" variant="outlined" className={classes.btnShowKeywords}>
+					  Show keywords
+				  </Button>
 			  </Grid>
 			  <Grid className={`${classes.item} ${classes.categoryList}`} item xs={5}>
 				  <CategoryList
@@ -177,7 +229,8 @@ class Container extends React.Component {
 				  />
 			  </Grid>
 			  <Grid className={`${classes.item} ${classes.filterList}`} item xs={7}>
-				  <FilterList filterValues={this.state.selectedPresetId === "1" ? filterValue1 : this.state.selectedPresetId === "2" ? filterValue2 : undefined}/>
+				  <FilterList
+					filterValues={this.state.selectedPresetId === "1" ? filterValue1 : this.state.selectedPresetId === "2" ? filterValue2 : undefined}/>
 			  </Grid>
 		  </Grid>
 		)
@@ -199,11 +252,30 @@ const styles = {
 		borderBottom: "1px solid rgba(0, 0, 0, 0.42)"
 	},
 	formControl: {
-		paddingTop: "8px",
+		paddingTop: "8px"
+	},
+	formControlPreset: {
 		width: "100%"
+	},
+	formControlSettings: {
+		width: "80%",
+		// "& .MuiPaper-root": {
+		// 	overflow: "hidden"
+		// }
 	},
 	outlinedInput: {
 		height: "45px"
+	},
+	btnTutorials: {
+		color: '#51cdfb',
+		borderColor: '#51cdfb',
+	},
+	btnClearFilter: {
+
+	},
+	btnShowKeywords: {
+		color: '#f49931',
+		borderColor: '#f49931',
 	}
 }
 export default withStyles(styles)(Container)

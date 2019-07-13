@@ -36,7 +36,7 @@ class FilterList extends React.Component {
 	CustomizedTextField = props => (
 	  <TextField
 		fullWidth
-		defaultValue={props.value}
+		value={props.value}
 		className={this.props.classes.textField}
 		InputProps={{
 			className: this.props.classes.textFieldInput,
@@ -93,7 +93,8 @@ class FilterList extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.filterValues !== this.props.filterValues) {
+		console.log(nextProps);
+		if (nextProps.filterValues && nextProps.filterValues !== this.props.filterValues) {
 			this.setState({ filterValues: nextProps.filterValues });
 		}
 	}
